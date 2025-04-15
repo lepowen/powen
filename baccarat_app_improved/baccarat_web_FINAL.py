@@ -111,26 +111,19 @@ def show_simulator_tab():
             username = st.text_input("帳號")
             password = st.text_input("密碼", type="password")
             submitted = st.form_submit_button("登入")
-
         if submitted:
-            with open(USER_FILE, "r") as f:
-                users = json.load(f)
-
             if username in users and bcrypt.checkpw(password.encode(), users[username]["password"].encode()):
-                client_id = st.session_state.get("device_id")
-                if not client_id:
-                    client_id = str(uuid.uuid4())
-                    st.session_state.device_id = client_id
-                users[username]["last_login"] = datetime.now().isoformat()
                 st.session_state.authenticated = True
                 st.session_state.username = username
                 st.session_state.role = users[username].get("role", "user")
-                with open(USER_FILE, "w") as f:
+                users[username]["last_login"] = datetime.now().isoformat()
+                with USER_FILE.open("w") as f:
                     json.dump(users, f)
                 st.success(f"✅ 歡迎 {username}！登入成功。")
                 st.experimental_rerun()
             else:
                 st.error("❌ 帳號或密碼錯誤，請再試一次")
+
     else:
     with open(USER_FILE, "r") as f:
         users = json.load(f)
