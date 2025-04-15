@@ -102,7 +102,7 @@ def show_simulator_tab():
 
     # 主系統登入與分頁邏輯
     if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False
+        st.session_state.authenticated = False
 
     if not st.session_state.authenticated:
     tab1 = st.tabs(["🔐 登入"])[0]
