@@ -104,8 +104,10 @@ def show_simulator_tab():
     if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
 
-  if "authenticated" not in st.session_state:
+    if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
+
+    if not st.session_state.authenticated:
         tab1 = st.tabs(["🔐 登入"])[0]
         with tab1:
             with st.form("login_form"):
