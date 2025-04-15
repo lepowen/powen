@@ -198,6 +198,53 @@ if st.session_state.role == "admin":
     with tab2:
         show_simulator_tab()
     with tab1:
-        st.write("（這裡可以放帳號管理功能）")
+        st.header("🔧 帳號管理後台")
+
+        st.subheader("📋 所有帳號")
+        if users:
+            for user, data in users.items():
+                created_time = data.get("created_at", "(未記錄)")
+                last_login = data.get("last_login", "(從未登入)")
+                st.write(f"👤 `{user}` - 權限：{data.get('role', 'user')} - 建立：{created_time} - 最後登入：{last_login}")
+        else:
+            st.write("目前尚無使用者資料。")
+
+        st.divider()
+
+        st.subheader("➕ 新增帳號")
+        with st.form("add_user_form"):
+            new_user = st.text_input("新帳號")
+            new_pass = st.text_input("新密碼", type="password")
+            submit_add = st.form_submit_button("新增帳號")
+            if submit_add:
+                if new_user in users:
+                    st.warning("❗ 此帳號已存在")
+                elif len(new_pass) < 6:
+                    st.warning("❗ 密碼請至少6位數")
+                else:
+                    hashed_pw = bcrypt.hashpw(new_pass.encode(), bcrypt.gensalt()).decode()
+                    users[new_user] = {
+                        "password": hashed_pw,
+                        "role": "user",
+                        "created_at": datetime.now().isoformat()
+                    }
+                    with open(USER_FILE, "w") as f:
+                        json.dump(users, f)
+                    st.success(f"✅ 已新增帳號 `{new_user}`")
+
+        st.subheader("🗑️ 刪除帳號")
+        deletable_users = [u for u in users if u != st.session_state.username]
+        if deletable_users:
+            with st.form("delete_user_form"):
+                del_user = st.selectbox("選擇帳號刪除", deletable_users)
+                submit_del = st.form_submit_button("刪除帳號")
+                if submit_del:
+                    users.pop(del_user)
+                    with open(USER_FILE, "w") as f:
+                        json.dump(users, f)
+                    st.success(f"✅ `{del_user}` 已被刪除")
+        else:
+            st.info("（無可刪除的其他帳號）")
+
 else:
     show_simulator_tab()
