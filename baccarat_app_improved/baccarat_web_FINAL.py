@@ -95,7 +95,7 @@ def show_simulator_tab():
                     st.success(f"開始模擬第 {st.session_state.round_count} 局...請稍等")
 
                     start_time = time.time()
-                    result = simulate_with_draw_split(st.session_state.deck, simulations_per_round=200000, rounds=5)
+                    result = simulate_with_draw_split(st.session_state.deck, simulations_per_round=100000, rounds=10)
                     end_time = time.time()
                     duration = end_time - start_time
 
