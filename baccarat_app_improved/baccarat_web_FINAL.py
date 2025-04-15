@@ -129,8 +129,8 @@ def show_simulator_tab():
                 st.error("❌ 帳號或密碼錯誤，請再試一次")
 
     else:
-    with open(USER_FILE, "r") as f:
-        users = json.load(f)
+        with open(USER_FILE, "r") as f:
+            users = json.load(f)
 
     if st.session_state.role == "admin":
         tab1, tab2 = st.tabs(["👤 帳號管理後台", "🎲 百家樂模擬區"])
