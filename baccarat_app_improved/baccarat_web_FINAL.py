@@ -104,13 +104,15 @@ def show_simulator_tab():
     if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
 
-    if not st.session_state.authenticated:
-    tab1 = st.tabs(["🔐 登入"])[0]
-    with tab1:
-        with st.form("login_form"):
-            username = st.text_input("帳號")
-            password = st.text_input("密碼", type="password")
-            submitted = st.form_submit_button("登入")
+  if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+        tab1 = st.tabs(["🔐 登入"])[0]
+        with tab1:
+            with st.form("login_form"):
+                username = st.text_input("帳號")
+                password = st.text_input("密碼", type="password")
+                submitted = st.form_submit_button("登入")
+                
         if submitted:
             if username in users and bcrypt.checkpw(password.encode(), users[username]["password"].encode()):
                 st.session_state.authenticated = True
