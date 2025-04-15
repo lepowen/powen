@@ -116,10 +116,105 @@ else:
     tab2 = st.tabs(["🎲 百家樂模擬區"])[0]
     with tab2:
         show_simulator_tab()
-def show_simulator_tab():
-    st.header("🎰 百家樂模擬區")
-    st.title("🎲 百家樂模擬區")
 
+def show_simulator_tab():
+    from collections import Counter
+    import time
+
+    st.header("🎰 百家樂模擬區")
+    st.write("這裡是模擬功能區，將進行 100 萬次百家樂模擬，分為 10 輪計算。")
+
+    def create_deck():
+        deck = []
+        for _ in range(8):
+            for card in range(1, 14):
+                deck.extend([card] * 4)
+        return deck
+
+    def baccarat_value(card):
+        return 0 if card >= 10 else card
+
+    def total_value(cards):
+        return sum(baccarat_value(c) for c in cards) % 10
+
+    def player_should_draw(total):
+        return total <= 5
+
+    def banker_should_draw(banker_total, player_third_card):
+        if banker_total >= 7:
+            return False
+        if banker_total <= 2:
+            return True
+        if banker_total == 3:
+            return player_third_card != 8
+        if banker_total == 4:
+            return 2 <= player_third_card <= 7
+        if banker_total == 5:
+            return 4 <= player_third_card <= 7
+        if banker_total == 6:
+            return 6 <= player_third_card <= 7
+        return False
+
+    def simulate_baccarat_game(deck):
+        player_cards = [deck.pop(), deck.pop()]
+        banker_cards = [deck.pop(), deck.pop()]
+
+        player_total = total_value(player_cards)
+        banker_total = total_value(banker_cards)
+
+        if player_total in [8, 9] or banker_total in [8, 9]:
+            if player_total > banker_total:
+                return "Player"
+            elif banker_total > player_total:
+                return "Banker"
+            else:
+                return "Tie"
+
+        player_third_card = None
+        if player_should_draw(player_total):
+            player_third_card = deck.pop()
+            player_cards.append(player_third_card)
+
+        if player_third_card is not None:
+            if banker_should_draw(banker_total, baccarat_value(player_third_card)):
+                banker_cards.append(deck.pop())
+        else:
+            if banker_total <= 5:
+                banker_cards.append(deck.pop())
+
+        player_total = total_value(player_cards)
+        banker_total = total_value(banker_cards)
+
+        if player_total > banker_total:
+            return "Player"
+        elif banker_total > player_total:
+            return "Banker"
+        else:
+            return "Tie"
+
+    if st.button("開始模擬 100 萬局（分10輪）"):
+        all_results = Counter()
+        start_time = time.time()
+
+        for round_num in range(10):
+            deck = create_deck()
+            random.shuffle(deck)
+            result_counter = Counter()
+            for _ in range(100000):
+                if len(deck) < 10:
+                    deck = create_deck()
+                    random.shuffle(deck)
+                result = simulate_baccarat_game(deck)
+                result_counter[result] += 1
+            st.write(f"第 {round_num+1} 輪結果：莊家 {result_counter['Banker']}、閒家 {result_counter['Player']}、和局 {result_counter['Tie']}")
+            all_results += result_counter
+
+        end_time = time.time()
+        st.subheader("💯 總結結果（100 萬局）")
+        st.write(f"👤 玩家勝：{all_results['Player']:,} 局")
+        st.write(f"🏦 莊家勝：{all_results['Banker']:,} 局")
+        st.write(f"🤝 和局：{all_results['Tie']:,} 局")
+        st.write(f"⏱️ 總耗時：{end_time - start_time:.2f} 秒")
     def create_deck():
         deck = []
         for _ in range(8):
