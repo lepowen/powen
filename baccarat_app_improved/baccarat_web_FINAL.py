@@ -7,7 +7,7 @@ from collections import Counter
 from pathlib import Path
 from datetime import datetime
 
-st.set_page_config(page_title="百家樂模擬器", layout="wide")
+st.set_page_config(page_title="百家送你花 僅供參考 Le關心你", layout="wide")
 USER_FILE = Path("users.json")
 
 # 載入使用者資料
@@ -46,7 +46,7 @@ if not st.session_state.authenticated:
 
 # ===== 功能模組 =====
 def show_simulator_tab():
-    st.title("🎲 百家樂模擬器")
+    st.title("🎲 百家送你花 僅供參考 Le關心你")
     if "deck" not in st.session_state:
         deck = []
         for _ in range(8):
