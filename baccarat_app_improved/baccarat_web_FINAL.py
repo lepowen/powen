@@ -54,8 +54,7 @@ def show_simulator_tab():
                 for _ in range(4):
                     deck.append(card)
         random.shuffle(deck)
-        for _ in range(8):
-            deck.pop()
+        
         st.session_state.deck = deck
         st.session_state.used_cards = []
         st.session_state.round_count = 0
